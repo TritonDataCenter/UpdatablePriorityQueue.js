@@ -1,6 +1,6 @@
 {
-  "name": "fastpriorityqueue",
-  "description": "Fast heap-based priority queue in JavaScript",
+  "name": "updatablepriorityqueue",
+  "description": "Updatable heap-based priority queue in JavaScript",
   "keywords": [
     "heap",
     "binary heap",
@@ -8,22 +8,24 @@
     "priority queue",
     "performance"
   ],
-  "version": "0.3.0",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lemire/FastPriorityQueue.js.git"
+    "url": "git+https://github.com/joyent/UpdatablePriorityQueue.js.git"
   },
-  "main": "FastPriorityQueue.js",
+  "dependencies": {
+    "assert-plus": "^1.0.0"
+  },
+  "main": "UpdatablePriorityQueue.js",
   "scripts": {
     "test": "mocha unit/basictests.js"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/lemire/FastPriorityQueue.js/issues"
+    "url": "https://github.com/joyent/UpdatablePriorityQueue.js/issues"
   },
-  "homepage": "https://github.com/lemire/FastPriorityQueue.js#readme",
+  "homepage": "https://github.com/joyent/UpdatablePriorityQueue.js#readme",
   "devDependencies": {
     "mocha": "^2.3.4"
-  },
-  "author": "Daniel Lemire <lemire@gmail.com> (http://lemire.me/en/)"
+  }
 }

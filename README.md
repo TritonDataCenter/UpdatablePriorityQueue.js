@@ -1,5 +1,5 @@
-# FastPriorityQueue.js : a fast heap-based priority queue in JavaScript
-[![Build Status](https://travis-ci.org/lemire/FastPriorityQueue.js.png)](https://travis-ci.org/lemire/FastPriorityQueue.js)
+# UpdatablePriorityQueue.js : a updatable heap-based priority queue in
+JavaScript based on FastPriorityQueue.js
 
 In a priority queue, you can...
 
@@ -10,9 +10,11 @@ In practice, "quickly" often means in logarithmic time (O(log n)).
 
 A heap can be used to implement a priority queue.
 
-FastPriorityQueue is an attempt to implement a performance-oriented priority queue
-in JavaScript. It can be several times faster than other similar libraries.
-It is ideal when performance matters.
+In an UpdatablePriorityQueue, you can also lookup/modify the elements
+inside the queue (ie you don't have to interact only with the
+least-element at the top), at the expense of maintaining some extra
+state (a mapping from element -> heap-position). After any updates,
+the priority-queue rebalances.
 
 License: Apache License 2.0
 
@@ -20,7 +22,7 @@ Usage
 ===
 
 ```javascript
-var x = new FastPriorityQueue();
+var x = new UpdatablePriorityQueue();
 x.add(1);
 x.add(0);
 x.add(5);
@@ -34,43 +36,62 @@ while(!x.isEmpty()) {
 x.trim(); // (optional) optimizes memory usage
 ```
 
-You can also provide the constructor with a comparator function.
+You can also provide the compound object with a functions to
+extract key and value
 
 
 ```javascript
-var x = new FastPriorityQueue(function(a,b) {return a > b});
-x.add(1);
-x.add(0);
-x.add(5);
-x.add(4);
-x.add(3);
+var getKey = function (o) { return (o.k); };
+var getValue = function (o) { return (o.v); };
+var x = new UpdatablePriorityQueue(getKey, getValue);
+x.add({'k':'a','v':1,'data':'foo'});
+x.add({'k':'b','v':0,'data':'bar'});
+x.add({'k':'c','v':5,'data':'baz'});
+x.add({'k':'d','v':4,'data':'thud'});
+x.add({'k':'e','v':3,'data':'blah'});
 while(!x.isEmpty()) {
-  console.log(x.poll());
-} // will print 5 4 3 1 0 
+  console.log(x.poll().data);
+} // will print bar foo blah thud baz
+```
+
+You can also update and delete the objects in-place
+
+```javascript
+var getKey = function (o) { return (o.k); };
+var getValue = function (o) { return (o.v); };
+var x = new UpdatablePriorityQueue(getKey, getValue);
+x.add({'k':'a','v':1,'data':'foo'});
+x.add({'k':'b','v':0,'data':'bar'});
+x.add({'k':'c','v':5,'data':'baz'});
+x.add({'k':'d','v':4,'data':'thud'});
+x.add({'k':'e','v':3,'data':'blah'});
+x.updateElement('e', {'k':'e','v':7,'data':'last'});
+x.deleteElement('d');
+while(!x.isEmpty()) {
+  console.log(x.poll().data);
+} // will print bar foo baz last
 ```
 
 If you are using node.js, you need to import the module:
 
 ```javascript
-var FastPriorityQueue = require("fastpriorityqueue");
-var b = new FastPriorityQueue();// initially empty
+var UpdatablePriorityQueue = require("updatablepriorityqueue");
+var b = new UpdatablePriorityQueue ();// initially empty
 b.add(1);// add the value "1"
 ```
-
-The ``replaceTop`` function allows you to add and poll in one integrated operation, which is useful fast top-k queries. See [Top speed for top-k queries](http://lemire.me/blog/2017/06/21/top-speed-for-top-k-queries/).
 
 npm install
 ===
 
-      $ npm install fastpriorityqueue
+      $ npm install updatablepriorityqueue
 
 Computational complexity
 ===
 
 The function calls "add" and "poll" have logarithmic complexity with respect
 to the size of the data structure (attribute size). Looking at the top value
-is a constant time operation.
-
+is a constant time operation. Update should have complexity roughly
+equivalent to add.
 
 
 Testing
@@ -80,56 +101,3 @@ Using node.js (npm), you can test the code as follows...
 
       $ npm install mocha
       $ npm test
-
-Is it faster?
-===
-
-It tends to fare well against the competition.
-In some tests, it can be five times faster than any other 
-JavaScript implementation we could find.
-
-```
-$ node test.js
-Platform: linux 4.4.0-38-generic x64
-Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
-Node version 4.5.0, v8 version 4.5.103.37
-
-Comparing against:
-js-priority-queue: https://github.com/adamhooper/js-priority-queue 0.1.5
-heap.js: https://github.com/qiao/heap.js 0.2.6
-binaryheapx: https://github.com/xudafeng/BinaryHeap 0.1.1
-priority_queue: https://github.com/agnat/js_priority_queue 0.1.3
-js-heap: https://github.com/thauburger/js-heap 0.3.1
-queue-priority: https://github.com/augustohp/Priority-Queue-NodeJS 1.0.0
-priorityqueuejs: https://github.com/janogonzalez/priorityqueuejs 1.0.0
-qheap: https://github.com/andrasq/node-qheap 1.3.0
-yabh: https://github.com/jmdobry/yabh 1.2.0
-
-starting dynamic queue/enqueue benchmark
-FastPriorityQueue x 36,813 ops/sec ±0.15% (98 runs sampled)
-js-priority-queue x 5,374 ops/sec ±0.29% (97 runs sampled)
-heap.js x 7,525 ops/sec ±0.21% (94 runs sampled)
-binaryheapx x 4,741 ops/sec ±0.19% (98 runs sampled)
-priority_queue x 3,657 ops/sec ±2.37% (92 runs sampled)
-js-heap x 271 ops/sec ±0.35% (90 runs sampled)
-queue-priority x 455 ops/sec ±0.44% (90 runs sampled)
-priorityqueuejs x 7,012 ops/sec ±0.14% (75 runs sampled)
-qheap x 36,289 ops/sec ±0.33% (97 runs sampled)
-yabh x 3,975 ops/sec ±3.57% (76 runs sampled)
-Fastest is FastPriorityQueue
-```
-
-Note that ``qheap`` has been updated following the introduction of ``FastPriorityQueue``, with a reference to ``FastPriorityQueue`` which might explains the fact that its performance is comparable to ``FastPriorityQueue``.
-
-Insertion order
-===
-
-A binary heap does not keep track of the insertion order. 
-
-You might also like...
-===
-
-If you like this library, you might also like
-- https://github.com/lemire/FastBitSet.js
-- https://github.com/lemire/StablePriorityQueue.js
-- https://github.com/lemire/FastIntegerCompression.js
