@@ -222,7 +222,7 @@ UpdatablePriorityQueue.prototype.updateElement = function (k, v) {
 };
 
 // Delete an entry by key, returns old value
-UpdatablePriorityQueue.prototype.deleteElement = function (k, v) {
+UpdatablePriorityQueue.prototype.deleteElement = function (k) {
     var index = this.lookup[k];
     var ans = this.array[index];
     delete this.lookup[this.identity(ans)];
