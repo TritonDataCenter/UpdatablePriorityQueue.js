@@ -90,6 +90,25 @@ describe('UpdatablePriorityQueue', function() {
     if (x.poll().k != 'd') throw 'bug';
   });
 
+  it('compoundObjDeleteTwice', function() {
+    var x = new UpdatablePriorityQueue(
+       function (o) { return (o.k); },
+       function (o) { return (o.v); });
+    x.add({'k':'a', 'v':1});
+    x.add({'k':'b', 'v':0});
+    x.add({'k':'c', 'v':5});
+    x.add({'k':'d', 'v':4});
+    x.add({'k':'e', 'v':3});
+    x.updateElement('c', {'k':'c', 'v':2});
+    x.deleteElement('b');
+    var r = x.deleteElement('b');
+    if (r !== undefined) throw 'bug';
+    if (x.poll().k != 'a') throw 'bug';
+    if (x.poll().k != 'c') throw 'bug';
+    if (x.poll().k != 'e') throw 'bug';
+    if (x.poll().k != 'd') throw 'bug';
+  });
+
   it('Random', function() {
     for (var ti = 0; ti < 100; ti++) {
       var b = new UpdatablePriorityQueue();
