@@ -240,8 +240,9 @@ UpdatablePriorityQueue.prototype.deleteElement = function (k) {
     this.size -= 1;
     this.trim();
 
-    // re-establish the heap invariant
-    this.heapify(this.array);
+    // re-establish the heap invariant, if needed
+    if (this.size > 0)
+       this.heapify(this.array);
 
     // return deleted element
     return (ans);

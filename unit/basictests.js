@@ -109,6 +109,20 @@ describe('UpdatablePriorityQueue', function() {
     if (x.poll().k != 'd') throw 'bug';
   });
 
+  it('compoundObjDeleteAll', function() {
+    var x = new UpdatablePriorityQueue(
+       function (o) { return (o.k); },
+       function (o) { return (o.v); });
+    x.add({'k':'b', 'v':0});
+    x.add({'k':'c', 'v':5});
+    var r = x.deleteElement('b');
+    r = x.deleteElement('b');
+    if (r !== undefined) throw 'bug';
+    r = x.deleteElement('c');
+    if (r.k != 'c') throw 'bug';
+    if (x.poll() !== undefined) throw 'bug';
+  });
+
   it('Random', function() {
     for (var ti = 0; ti < 100; ti++) {
       var b = new UpdatablePriorityQueue();
